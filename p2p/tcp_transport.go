@@ -18,3 +18,15 @@ func NewTCPTransport(listenAddr string) *TCPTransport {
 		listenAddr: listenAddr,
 	}
 }
+
+func (t *TCPTransport) listenAndAccept() error {
+	var err error
+	t.listener, err = net.Listen("tcp", t.listenAddr)
+	if err != nil {
+		return err
+	}
+}
+
+func (t *TCPTransport) acceptLoop() {
+
+}
