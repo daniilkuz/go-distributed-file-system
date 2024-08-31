@@ -55,10 +55,13 @@ func (t *TCPTransport) startAcceptLoop() {
 		if err != nil {
 			fmt.Printf("TCP accpet error: %s\n", err)
 		}
+
 		go t.handleConn(conn)
 	}
 }
 
 func (t *TCPTransport) handleConn(conn net.Conn) {
-	fmt.Printf("new incomming connection %+v\n", conn)
+
+	peer := NewTCPPeer(conn, true)
+	fmt.Printf("new incomming connection %+v\n", peer)
 }
