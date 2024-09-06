@@ -80,7 +80,7 @@ func (t *TCPTransport) handleConn(conn net.Conn) {
 	}
 
 	// buf := new(bytes.Buffer)
-	msg := &Temp{}
+	msg := &Message{}
 
 	for {
 		if err := t.Decoder.Decode(conn, msg); err != nil {
