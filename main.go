@@ -7,11 +7,17 @@ import (
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
 
+func OnPeer(p2p.Peer) error {
+	fmt.Println("doing some logic with the peer outside of TCPTransport")
+	return nil
+}
+
 func main() {
 	tcpOpts := p2p.TCPTransportOpts{
 		HandshakeFunc: p2p.NOPHandshakeFunc,
 		ListenAddr:    ":3000",
 		Decoder:       p2p.DefaultDecoder{},
+		OnPeer:        OnPeer,
 	}
 
 	tr := p2p.NewTCPTransport(tcpOpts)
