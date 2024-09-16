@@ -7,8 +7,9 @@ import (
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
 
-func OnPeer(p2p.Peer) error {
-	fmt.Println("doing some logic with the peer outside of TCPTransport")
+func OnPeer(peer p2p.Peer) error {
+	// fmt.Println("doing some logic with the peer outside of TCPTransport")
+	peer.Close()
 	return nil
 }
 
