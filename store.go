@@ -1,6 +1,10 @@
 package main
 
-import "io"
+import (
+	"io"
+	"log"
+	"os"
+)
 
 type PathTransformFunc func(string) string
 
@@ -24,5 +28,26 @@ func NewStore(opts StoreOpts) *Store {
 
 func (s *Store) writeStream(key string, r io.Reader) error {
 
-	pathname := key
+	pathName := s.PathTransformFunc(key)
+
+	if err := os.MkdirAll(pathName, os.ModePerm); err != nil {
+		return err
+	}
+
+	filename := "somefilename"
+	pathAndFilename := pathName + "/" + filename
+
+	f, err := os.Open(pathAndFilename)
+	if err != nil {
+		return err
+	}
+
+	n, err := io.Copy(f, r)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("writtten (%d) bytes to disk: %s", n, pathAndFilename)
+
+	return nil
 }
