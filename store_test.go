@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"testing"
 )
 
@@ -10,5 +10,9 @@ func TestStore(t *testing.T) {
 		PathTransformFunc: DefaultPathTransofrmFunc,
 	}
 	s := NewStore(opts)
-	fmt.Println("%+v\n", s)
+
+	data := bytes.NewBuffer([]byte("random jpg image"))
+	if err := s.writeStream("key", data); err != nil {
+		t.Error(err)
+	}
 }
