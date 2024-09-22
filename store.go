@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
 	"io"
@@ -9,7 +11,7 @@ import (
 	"strings"
 )
 
-func CASPathTransformFunc(key string) string {
+func CASPathTransformFunc(key string) PathKey {
 	hash := sha1.Sum([]byte(key))
 	hashStr := hex.EncodeToString(hash[:])
 
@@ -20,10 +22,21 @@ func CASPathTransformFunc(key string) string {
 		from, to := i*blocksize, (i*blocksize)+blocksize
 		paths[i] = hashStr[from:to]
 	}
-	return strings.Join(paths, "/")
+
+	return PathKey{
+		Pathname: strings.Join(paths, "/"),
+		Original: hashStr,
+	}
+
+	// return strings.Join(paths, "/")
 }
 
-type PathTransformFunc func(string) string
+type PathTransformFunc func(string) PathKey
+
+type PathKey struct {
+	Pathname string
+	Original string
+}
 
 type StoreOpts struct {
 	PathTransformFunc PathTransformFunc
@@ -51,7 +64,13 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 		return err
 	}
 
-	filename := "somefilename"
+	// filename := "somefilename"
+	buf := new(bytes.Buffer)
+	io.Copy(buf, r)
+
+	filenameBytes := md5.Sum(buf.Bytes())
+	filename := hex.EncodeToString(filenameBytes[:])
+
 	pathAndFilename := pathName + "/" + filename
 
 	f, err := os.Create(pathAndFilename)
@@ -59,7 +78,7 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 		return err
 	}
 
-	n, err := io.Copy(f, r)
+	n, err := io.Copy(f, buf)
 	if err != nil {
 		return err
 	}
