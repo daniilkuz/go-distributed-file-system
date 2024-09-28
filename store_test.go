@@ -23,6 +23,19 @@ func TestPathTransformFunc(t *testing.T) {
 
 }
 
+func TestStoreDeleteKey(t *testing.T) {
+	opts := StoreOpts{
+		PathTransformFunc: CASPathTransformFunc,
+	}
+	s := NewStore(opts)
+	key := "key for jpg"
+	data := []byte("random jpg image")
+	if err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
+		t.Error(err)
+	}
+
+}
+
 func TestStore(t *testing.T) {
 	opts := StoreOpts{
 		PathTransformFunc: CASPathTransformFunc,
