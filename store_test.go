@@ -34,6 +34,10 @@ func TestStoreDeleteKey(t *testing.T) {
 		t.Error(err)
 	}
 
+	if err := s.Delete(key); err != nil {
+		t.Error(err)
+	}
+
 }
 
 func TestStore(t *testing.T) {
