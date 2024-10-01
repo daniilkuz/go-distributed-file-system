@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+const defaultRootFolderName = "defaultfoldername"
+
 func CASPathTransformFunc(key string) PathKey {
 	hash := sha1.Sum([]byte(key))
 	hashStr := hex.EncodeToString(hash[:])
@@ -52,11 +54,15 @@ func (p PathKey) FullPath() string {
 }
 
 type StoreOpts struct {
+	Root              string
 	PathTransformFunc PathTransformFunc
 }
 
-var DefaultPathTransofrmFunc = func(key string) string {
-	return key
+var DefaultPathTransofrmFunc = func(key string) PathKey {
+	return PathKey{
+		Pathname: key,
+		Filename: key,
+	}
 }
 
 type Store struct {
@@ -64,6 +70,14 @@ type Store struct {
 }
 
 func NewStore(opts StoreOpts) *Store {
+	if opts.PathTransformFunc == nil {
+		opts.PathTransformFunc = DefaultPathTransofrmFunc
+	}
+
+	if len(opts.Root) == 0 {
+		opts.Root = defaultRootFolderName
+	}
+
 	return &Store{
 		StoreOpts: opts,
 	}

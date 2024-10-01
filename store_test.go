@@ -61,4 +61,6 @@ func TestStore(t *testing.T) {
 	if string(b) != string(data) {
 		t.Errorf("got %s, but expected %s", b, data)
 	}
+
+	s.Delete(key)
 }
