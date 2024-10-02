@@ -99,12 +99,6 @@ func (s *Store) Delete(key string) error {
 		log.Printf("deleted [%s] from disk", pathKey.Filename)
 	}()
 
-	// if err := os.RemoveAll(pathKey.FullPath()); err != nil {
-	// 	return err
-	// }
-
-	// return os.RemoveAll(pathKey.FullPath())
-
 	return os.RemoveAll(pathKey.FirstPathName())
 
 }
@@ -128,8 +122,8 @@ func (s *Store) readStream(key string) (io.ReadCloser, error) {
 func (s *Store) writeStream(key string, r io.Reader) error {
 
 	pathKey := s.PathTransformFunc(key)
-
-	if err := os.MkdirAll(pathKey.Pathname, os.ModePerm); err != nil {
+	pathNameWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.Pathname)
+	if err := os.MkdirAll(pathNameWithRoot, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -140,9 +134,9 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 	// filenameBytes := md5.Sum(buf.Bytes())
 	// filename := hex.EncodeToString(filenameBytes[:])
 
-	fullPath := pathKey.FullPath()
+	fullPathWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.FullPath())
 
-	f, err := os.Create(fullPath)
+	f, err := os.Create(fullPathWithRoot)
 	if err != nil {
 		return err
 	}
@@ -152,7 +146,7 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 		return err
 	}
 
-	log.Printf("writtten (%d) bytes to disk: %s", n, fullPath)
+	log.Printf("writtten (%d) bytes to disk: %s", n, fullPathWithRoot)
 
 	return nil
 }
