@@ -44,29 +44,36 @@ func TestStore(t *testing.T) {
 
 	s := newStore()
 	defer teardown(t, s)
+	for i := 0; i < 50; i++ {
+		key := fmt.Sprintf("key %d for jpg", i)
 
-	key := "key for jpg"
+		data := []byte("random jpg image")
+		if err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
+			t.Error(err)
+		}
 
-	data := []byte("random jpg image")
-	if err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
-		t.Error(err)
+		if ok := s.Has(key); !ok {
+			t.Errorf("expected to have key %s", key)
+		}
+
+		r, err := s.Read(key)
+		if err != nil {
+			t.Error(err)
+		}
+
+		b, _ := io.ReadAll(r)
+		if string(b) != string(data) {
+			t.Errorf("got %s, but expected %s", b, data)
+		}
+
+		if err := s.Delete(key); err != nil {
+			t.Error(err)
+		}
+
+		if ok := s.Has(key); ok {
+			t.Errorf("expected not to have key %s", key)
+		}
 	}
-
-	if ok := s.Has(key); !ok {
-		t.Errorf("expected to have key %s", key)
-	}
-
-	r, err := s.Read(key)
-	if err != nil {
-		t.Error(err)
-	}
-
-	b, _ := io.ReadAll(r)
-	if string(b) != string(data) {
-		t.Errorf("got %s, but expected %s", b, data)
-	}
-
-	s.Delete(key)
 }
 
 func newStore() *Store {
