@@ -8,13 +8,13 @@ import (
 
 func main() {
 	tcpTransportOpts := p2p.TCPTransportOpts{
-		ListenAddr:    "3000",
+		ListenAddr:    ":3000",
 		HandshakeFunc: p2p.NOPHandshakeFunc,
 		Decoder:       p2p.DefaultDecoder{},
 	}
 	tcpTransport := p2p.NewTCPTransport(tcpTransportOpts)
 	fileServerOpts := FileServerOpts{
-		ListenAddr:        "3000",
+		ListenAddr:        ":3000",
 		StoreageRoot:      "3000_netweork",
 		PathTransformFunc: CASPathTransformFunc,
 		Transport:         *tcpTransport,
