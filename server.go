@@ -1,6 +1,10 @@
 package main
 
-import "github.com/daniilkuz/go-distributed-file-system/p2p"
+import (
+	"fmt"
+
+	"github.com/daniilkuz/go-distributed-file-system/p2p"
+)
 
 type FileServerOpts struct {
 	ListenAddr        string
@@ -12,7 +16,8 @@ type FileServerOpts struct {
 type FileServer struct {
 	FileServerOpts
 
-	store *Store
+	store  *Store
+	quitch chan struct{}
 }
 
 func NewFileServer(opts FileServerOpts) *FileServer {
@@ -24,6 +29,16 @@ func NewFileServer(opts FileServerOpts) *FileServer {
 	return &FileServer{
 		FileServerOpts: opts,
 		store:          NewStore(storeOpts),
+		quitch:         make(chan struct{}),
+	}
+}
+
+func (s *FileServer) loop() {
+	for {
+		select {
+		case msg := <-s.Transport.Consume():
+			fmt.Println(msg)
+		}
 	}
 }
 
