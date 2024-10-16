@@ -10,7 +10,7 @@ type FileServerOpts struct {
 	ListenAddr        string
 	StoreageRoot      string
 	PathTransformFunc PathTransformFunc
-	Transport         p2p.TCPTransport
+	Transport         *p2p.TCPTransport
 }
 
 type FileServer struct {
@@ -33,19 +33,26 @@ func NewFileServer(opts FileServerOpts) *FileServer {
 	}
 }
 
+func (s *FileServer) Stop() {
+	close(s.quitch)
+}
+
 func (s *FileServer) loop() {
 	for {
 		select {
 		case msg := <-s.Transport.Consume():
 			fmt.Println(msg)
+		case <-s.quitch:
+			return
 		}
 	}
 }
 
-func (s *FileServerOpts) Start() error {
+func (s *FileServer) Start() error {
 	if err := s.Transport.ListenAndAccept(); err != nil {
 		return err
 	}
+	s.loop()
 
 	return nil
 }

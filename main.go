@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
@@ -14,12 +15,17 @@ func main() {
 	}
 	tcpTransport := p2p.NewTCPTransport(tcpTransportOpts)
 	fileServerOpts := FileServerOpts{
-		ListenAddr:        ":3000",
 		StoreageRoot:      "3000_netweork",
 		PathTransformFunc: CASPathTransformFunc,
-		Transport:         *tcpTransport,
+		Transport:         tcpTransport,
 	}
 	s := NewFileServer(fileServerOpts)
+
+	go func() {
+		time.Sleep(time.Second)
+		s.Stop()
+	}()
+
 	if err := s.Start(); err != nil {
 		log.Fatal(err)
 	}
