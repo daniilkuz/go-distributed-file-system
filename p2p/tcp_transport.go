@@ -60,6 +60,13 @@ func (t *TCPTransport) Close() error {
 	return t.listener.Close()
 }
 
+func (t *TCPTransport) Dial(addr string) error {
+	conn, err := net.Dial("tcp", addr)
+	if err != nil {
+		return nil
+	}
+}
+
 func (t *TCPTransport) ListenAndAccept() error {
 	var err error
 	t.listener, err = net.Listen("tcp", t.ListenAddr)

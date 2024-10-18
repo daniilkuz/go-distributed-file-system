@@ -8,10 +8,11 @@ import (
 )
 
 type FileServerOpts struct {
-	ListenAddr        string
+	// ListenAddr        string
 	StoreageRoot      string
 	PathTransformFunc PathTransformFunc
 	Transport         *p2p.TCPTransport
+	BootstrapNodes    []string
 }
 
 type FileServer struct {
@@ -51,6 +52,13 @@ func (s *FileServer) loop() {
 			return
 		}
 	}
+}
+
+func (s *FileServer) bootstrapNetwork() error {
+	for _, addr := range s.BootstrapNodes {
+		// s.Transport.Dial()
+	}
+	return nil
 }
 
 func (s *FileServer) Start() error {
