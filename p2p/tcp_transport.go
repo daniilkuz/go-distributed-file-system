@@ -65,6 +65,8 @@ func (t *TCPTransport) Dial(addr string) error {
 	if err != nil {
 		return nil
 	}
+	go t.handleConn(conn, true)
+	return nil
 }
 
 func (t *TCPTransport) ListenAndAccept() error {
@@ -92,11 +94,11 @@ func (t *TCPTransport) startAcceptLoop() {
 		}
 
 		fmt.Printf("new incomming connection %+v\n", conn)
-		go t.handleConn(conn)
+		go t.handleConn(conn, false)
 	}
 }
 
-func (t *TCPTransport) handleConn(conn net.Conn) {
+func (t *TCPTransport) handleConn(conn net.Conn, outbound bool) {
 
 	var err error
 
@@ -105,7 +107,7 @@ func (t *TCPTransport) handleConn(conn net.Conn) {
 		conn.Close()
 	}()
 
-	peer := NewTCPPeer(conn, true)
+	peer := NewTCPPeer(conn, outbound)
 
 	if err := t.HandshakeFunc(peer); err != nil {
 		// conn.Close()

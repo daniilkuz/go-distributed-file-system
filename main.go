@@ -18,6 +18,7 @@ func main() {
 		StoreageRoot:      "3000_netweork",
 		PathTransformFunc: CASPathTransformFunc,
 		Transport:         tcpTransport,
+		BootstrapNodes:    []string{":4000"},
 	}
 	s := NewFileServer(fileServerOpts)
 
