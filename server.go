@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"io"
 	"log"
@@ -41,9 +42,16 @@ func NewFileServer(opts FileServerOpts) *FileServer {
 }
 
 type Payload struct {
+	Key  string
+	Data []byte
 }
 
 func (s *FileServer) broadcast(p Payload) error {
+	for _, peer := range s.peers {
+		if err := gob.NewEncoder(peer).Encode(p); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
