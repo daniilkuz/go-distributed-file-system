@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/gob"
 	"fmt"
 	"io"
@@ -64,6 +65,17 @@ func (s *FileServer) broadcast(p Payload) error {
 }
 
 func (s *FileServer) StoreData(key string, data io.Reader) error {
+	if err := s.store.Write(key, data); err != nil {
+		return err
+	}
+
+	buf := new(bytes.Buffer)
+	n, err := io.Copy(buf, data)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("written %d bytes\n", n)
+	fmt.Println(buf.Bytes())
 	return nil
 }
 
