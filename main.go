@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"log"
+	"time"
 
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
@@ -35,8 +36,8 @@ func main() {
 		log.Fatal(s1.Start())
 	}()
 
-	s2.Start()
-
+	go s2.Start()
+	time.Sleep(time.Second)
 	data := bytes.NewReader([]byte("Something to say"))
 	s2.StoreData("private key", data)
 }
