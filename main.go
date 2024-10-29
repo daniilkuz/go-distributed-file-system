@@ -40,4 +40,6 @@ func main() {
 	time.Sleep(time.Second)
 	data := bytes.NewReader([]byte("Something to say"))
 	s2.StoreData("private key", data)
+
+	select {}
 }

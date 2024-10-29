@@ -47,7 +47,7 @@ type Payload struct {
 	Data []byte
 }
 
-func (s *FileServer) broadcast(p Payload) error {
+func (s *FileServer) broadcast(p *Payload) error {
 
 	peers := []io.Writer{}
 	for _, peer := range s.peers {
@@ -74,9 +74,14 @@ func (s *FileServer) StoreData(key string, data io.Reader) error {
 	if err != nil {
 		return err
 	}
+
+	p := &Payload{
+		Key:  key,
+		Data: buf.Bytes(),
+	}
 	fmt.Printf("written %d bytes\n", n)
 	fmt.Println(buf.Bytes())
-	return nil
+	return s.broadcast(p)
 }
 
 func (s *FileServer) Stop() {
@@ -99,6 +104,10 @@ func (s *FileServer) loop() {
 	for {
 		select {
 		case msg := <-s.Transport.Consume():
+			var p Payload
+			if err := gob.NewDecoder(bytes.NewReader(msg.Payload)).Decode(&p); err != nil {
+				log.Fatal(err)
+			}
 			fmt.Println(msg)
 		case <-s.quitch:
 			return
