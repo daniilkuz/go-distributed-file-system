@@ -64,22 +64,25 @@ func (s *FileServer) broadcast(p *Payload) error {
 	// return nil
 }
 
-func (s *FileServer) StoreData(key string, data io.Reader) error {
-	if err := s.store.Write(key, data); err != nil {
+func (s *FileServer) StoreData(key string, r io.Reader) error {
+
+	buf := new(bytes.Buffer)
+	tee := io.TeeReader(r, buf)
+
+	if err := s.store.Write(key, tee); err != nil {
 		return err
 	}
 
-	buf := new(bytes.Buffer)
-	n, err := io.Copy(buf, data)
-	if err != nil {
-		return err
-	}
+	// _, err := io.Copy(buf, r)
+	// if err != nil {
+	// 	return err
+	// }
 
 	p := &Payload{
 		Key:  key,
 		Data: buf.Bytes(),
 	}
-	fmt.Printf("written %d bytes\n", n)
+	// fmt.Printf("written %d bytes\n", n)
 	fmt.Println(buf.Bytes())
 	return s.broadcast(p)
 }
@@ -108,7 +111,7 @@ func (s *FileServer) loop() {
 			if err := gob.NewDecoder(bytes.NewReader(msg.Payload)).Decode(&p); err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(msg)
+			fmt.Printf("%+v\n", p)
 		case <-s.quitch:
 			return
 		}
