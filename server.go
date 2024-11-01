@@ -111,7 +111,11 @@ func (s *FileServer) loop() {
 		case msg := <-s.Transport.Consume():
 			var m Message
 			if err := gob.NewDecoder(bytes.NewReader(msg.Payload)).Decode(&m); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+			}
+
+			if err := s.handleMessage(&m); err != nil {
+				log.Println(err)
 			}
 			// fmt.Printf("%+v\n", p)
 		case <-s.quitch:
@@ -120,7 +124,11 @@ func (s *FileServer) loop() {
 	}
 }
 
-func (s *FileServer) handlePayload(msg *Message) error {
+func (s *FileServer) handleMessage(msg *Message) error {
+	switch v := msg.Payload.(type) {
+	case *DataMessage:
+		fmt.Printf("received data %+v\n", v)
+	}
 	return nil
 }
 
