@@ -79,6 +79,15 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 			return err
 		}
 	}
+
+	payload := []byte("super large file")
+
+	for _, peer := range s.peers {
+		if err := peer.Send(payload); err != nil {
+			return err
+		}
+	}
+
 	return nil
 
 	// buf := new(bytes.Buffer)
@@ -124,6 +133,13 @@ func (s *FileServer) loop() {
 			if err := gob.NewDecoder(bytes.NewReader(rpc.Payload)).Decode(&msg); err != nil {
 				log.Println(err)
 			}
+
+			peer, ok := s.peers[rpc.From]
+			if !ok {
+				panic("peer not found in peer map")
+			}
+
+			fmt.Println(peer)
 
 			fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
 
