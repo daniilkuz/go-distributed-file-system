@@ -139,7 +139,11 @@ func (s *FileServer) loop() {
 				panic("peer not found in peer map")
 			}
 
-			fmt.Println(peer)
+			// fmt.Println(peer)
+			buf := make([]byte, 1000)
+			if _, err := peer.Read(buf); err != nil {
+				panic(err)
+			}
 
 			fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
 
