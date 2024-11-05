@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
@@ -80,6 +81,8 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 		}
 	}
 
+	time.Sleep(time.Second * 3)
+
 	payload := []byte("super large file")
 
 	for _, peer := range s.peers {
@@ -134,6 +137,8 @@ func (s *FileServer) loop() {
 				log.Println(err)
 			}
 
+			fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
+
 			peer, ok := s.peers[rpc.From]
 			if !ok {
 				panic("peer not found in peer map")
@@ -145,7 +150,9 @@ func (s *FileServer) loop() {
 				panic(err)
 			}
 
-			fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
+			fmt.Printf("%s\n", string(buf))
+
+			peer.(*p2p.TCPPeer).Wg.Done()
 
 			// if err := s.handleMessage(&m); err != nil {
 			// 	log.Println(err)
