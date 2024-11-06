@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/daniilkuz/go-distributed-file-system/p2p"
 )
@@ -48,6 +47,10 @@ type Message struct {
 	Payload any
 }
 
+type MessageStoreFile struct {
+	key string
+}
+
 // type DataMessage struct {
 // 	Key  string
 // 	Data []byte
@@ -68,7 +71,9 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 
 	buf := new(bytes.Buffer)
 	msg := Message{
-		Payload: []byte("message to store"),
+		Payload: MessageStoreFile{
+			key: key,
+		},
 	}
 
 	if err := gob.NewEncoder(buf).Encode(msg); err != nil {
@@ -81,15 +86,15 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 		}
 	}
 
-	time.Sleep(time.Second * 3)
+	// time.Sleep(time.Second * 3)
 
-	payload := []byte("super large file")
+	// payload := []byte("super large file")
 
-	for _, peer := range s.peers {
-		if err := peer.Send(payload); err != nil {
-			return err
-		}
-	}
+	// for _, peer := range s.peers {
+	// 	if err := peer.Send(payload); err != nil {
+	// 		return err
+	// 	}
+	// }
 
 	return nil
 
@@ -137,7 +142,8 @@ func (s *FileServer) loop() {
 				log.Println(err)
 			}
 
-			fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
+			fmt.Printf("%+v\n", msg.Payload)
+			// fmt.Printf("recv: %s\n", string(msg.Payload.([]byte)))
 
 			peer, ok := s.peers[rpc.From]
 			if !ok {
