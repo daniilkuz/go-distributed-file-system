@@ -75,7 +75,6 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 			key: key,
 		},
 	}
-
 	if err := gob.NewEncoder(buf).Encode(msg); err != nil {
 		return err
 	}
@@ -202,4 +201,8 @@ func (s *FileServer) Start() error {
 	s.loop()
 
 	return nil
+}
+
+func init() {
+	gob.Register(MessageStoreFile{})
 }
