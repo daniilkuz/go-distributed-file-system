@@ -49,7 +49,7 @@ type Message struct {
 }
 
 type MessageStoreFile struct {
-	key string
+	Key string
 }
 
 // type DataMessage struct {
@@ -73,7 +73,7 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 	buf := new(bytes.Buffer)
 	msg := Message{
 		Payload: MessageStoreFile{
-			key: key,
+			Key: key,
 		},
 	}
 	if err := gob.NewEncoder(buf).Encode(msg); err != nil {
@@ -185,8 +185,15 @@ func (s *FileServer) handleMessage(from string, msg *Message) error {
 }
 
 func (s *FileServer) handleMessageStoreFile(from string, msg MessageStoreFile) error {
-	fmt.Printf("recv store file msg: %+v\n", msg)
-	return nil
+	peer, ok := s.peers[from]
+	if !ok {
+		return fmt.Errorf("peer (%s) could not be found in the peer list", from)
+	}
+
+	peer.(*p2p.TCPPeer).Wg.Done()
+
+	// fmt.Printf("recv store file msg: %+v\n", msg)
+	return s.store.Write(msg.Key, peer)
 }
 
 func (s *FileServer) bootstrapNetwork() error {
