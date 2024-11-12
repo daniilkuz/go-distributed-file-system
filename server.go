@@ -90,12 +90,18 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 
 	time.Sleep(time.Second * 3)
 
-	payload := []byte("super large file")
+	// payload := []byte("super large file")
 
 	for _, peer := range s.peers {
-		if err := peer.Send(payload); err != nil {
+		// n, err := io.Copy(peer, bytes.NewReader(payload))
+		n, err := io.Copy(peer, r)
+		if err != nil {
 			return err
 		}
+		fmt.Println("received and written bytes to disk: ", n)
+		// if err := peer.Send(payload); err != nil {
+		// 	return err
+		// }
 	}
 
 	return nil
