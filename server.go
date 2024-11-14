@@ -92,7 +92,7 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 	}
 
 	for _, peer := range s.peers {
-		if err := peer.Send(buf.Bytes()); err != nil {
+		if err := peer.Send(msgBuf.Bytes()); err != nil {
 			return err
 		}
 	}
@@ -103,7 +103,7 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 
 	for _, peer := range s.peers {
 		// n, err := io.Copy(peer, bytes.NewReader(payload))
-		n, err := io.Copy(peer, r)
+		n, err := io.Copy(peer, buf)
 		if err != nil {
 			return err
 		}
