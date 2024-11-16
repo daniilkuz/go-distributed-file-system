@@ -58,7 +58,7 @@ type MessageStoreFile struct {
 // 	Data []byte
 // }
 
-func (s *FileServer) broadcast(msg *Message) error {
+func (s *FileServer) stream(msg *Message) error {
 
 	peers := []io.Writer{}
 	for _, peer := range s.peers {
@@ -69,7 +69,29 @@ func (s *FileServer) broadcast(msg *Message) error {
 	return gob.NewEncoder(mw).Encode(msg)
 }
 
-func (s *FileServer) StoreData(key string, r io.Reader) error {
+func (s *FileServer) broadcast(msg *Message) error {
+	buf := new(bytes.Buffer)
+	if err := gob.NewEncoder(buf).Encode(msg); err != nil {
+		return err
+	}
+
+	for _, peer := range s.peers {
+		if err := peer.Send(buf.Bytes()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *FileServer) Get(key string) (io.Reader, error) {
+	if s.store.Has(key) {
+		return s.store.Read(key)
+	}
+
+	return nil, nil
+}
+
+func (s *FileServer) Store(key string, r io.Reader) error {
 
 	fileBuffer := new(bytes.Buffer)
 	tee := io.TeeReader(r, fileBuffer)
@@ -86,15 +108,19 @@ func (s *FileServer) StoreData(key string, r io.Reader) error {
 		},
 	}
 
-	msgBuf := new(bytes.Buffer)
-	if err := gob.NewEncoder(msgBuf).Encode(msg); err != nil {
-		return err
-	}
+	// msgBuf := new(bytes.Buffer)
+	// if err := gob.NewEncoder(msgBuf).Encode(msg); err != nil {
+	// 	return err
+	// }
 
-	for _, peer := range s.peers {
-		if err := peer.Send(msgBuf.Bytes()); err != nil {
-			return err
-		}
+	// for _, peer := range s.peers {
+	// 	if err := peer.Send(msgBuf.Bytes()); err != nil {
+	// 		return err
+	// 	}
+	// }
+
+	if err := s.broadcast(&msg); err != nil {
+		return err
 	}
 
 	time.Sleep(time.Second * 3)
