@@ -53,6 +53,10 @@ type MessageStoreFile struct {
 	Size int64
 }
 
+type MessageGetFile struct {
+	Key string
+}
+
 // type DataMessage struct {
 // 	Key  string
 // 	Data []byte
@@ -86,6 +90,17 @@ func (s *FileServer) broadcast(msg *Message) error {
 func (s *FileServer) Get(key string) (io.Reader, error) {
 	if s.store.Has(key) {
 		return s.store.Read(key)
+	}
+
+	fmt.Printf("don't have file (%s) locally, fetching from network...\n", key)
+	msg := Message{
+		Payload: MessageGetFile{
+			Key: key,
+		},
+	}
+
+	if err := s.broadcast(&msg); err != nil {
+		return nil, err
 	}
 
 	return nil, nil
