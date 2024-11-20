@@ -103,6 +103,8 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		return nil, err
 	}
 
+	select {}
+
 	return nil, nil
 }
 
@@ -238,7 +240,14 @@ func (s *FileServer) handleMessage(from string, msg *Message) error {
 	case MessageStoreFile:
 		// fmt.Printf("received data %+v\n", v)
 		return s.handleMessageStoreFile(from, v)
+	case MessageGetFile:
+		return s.handleMessageGetFile(from, v)
 	}
+	return nil
+}
+
+func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error {
+	fmt.Println("need to get a file from disk and send it over the network")
 	return nil
 }
 
@@ -289,4 +298,5 @@ func (s *FileServer) Start() error {
 
 func init() {
 	gob.Register(MessageStoreFile{})
+	gob.Register(MessageGetFile{})
 }
