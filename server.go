@@ -247,7 +247,26 @@ func (s *FileServer) handleMessage(from string, msg *Message) error {
 }
 
 func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error {
-	fmt.Println("need to get a file from disk and send it over the network")
+	if !s.store.Has(msg.Key) {
+		return fmt.Errorf("need to serve file (%s), but it does not exist on disk", msg.Key)
+	}
+	r, err := s.store.Read(msg.Key)
+	if err != nil {
+		return err
+	}
+
+	peer, ok := s.peers[from]
+	if !ok {
+		return fmt.Errorf("peer %s not in map", from)
+	}
+
+	n, err := io.Copy(peer, r)
+
+	if err != nil {
+		return err
+	}
+	fmt.Printf("written %d bytes over the network to %s\n", n, from)
+
 	return nil
 }
 
