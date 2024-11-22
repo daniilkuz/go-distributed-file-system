@@ -191,7 +191,7 @@ func (s *FileServer) OnPeer(p p2p.Peer) error {
 
 func (s *FileServer) loop() {
 	defer func() {
-		log.Println("file server stopped due to user quit")
+		log.Println("file server stopped due to error or user quit action")
 		s.Transport.Close()
 	}()
 	for {
@@ -199,12 +199,12 @@ func (s *FileServer) loop() {
 		case rpc := <-s.Transport.Consume():
 			var msg Message
 			if err := gob.NewDecoder(bytes.NewReader(rpc.Payload)).Decode(&msg); err != nil {
-				log.Println(err)
+				log.Println("decoding error: ", err)
 			}
 
 			if err := s.handleMessage(rpc.From, &msg); err != nil {
-				log.Println(err)
-				return
+				log.Println("handle message error: ", err)
+				// return
 			}
 
 			// fmt.Printf("%+v\n", msg.Payload)
