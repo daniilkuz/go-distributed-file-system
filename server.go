@@ -250,6 +250,9 @@ func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error
 	if !s.store.Has(msg.Key) {
 		return fmt.Errorf("need to serve file (%s), but it does not exist on disk", msg.Key)
 	}
+
+	fmt.Printf("got file (%s) serving over the network\n", msg.Key)
+
 	r, err := s.store.Read(msg.Key)
 	if err != nil {
 		return err
