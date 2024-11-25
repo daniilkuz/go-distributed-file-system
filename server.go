@@ -116,7 +116,7 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 
 	select {}
 
-	return nil, nil
+	// return nil, nil
 }
 
 func (s *FileServer) Store(key string, r io.Reader) error {
