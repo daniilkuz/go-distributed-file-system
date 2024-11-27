@@ -110,7 +110,7 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("received bytes over the network: ", n)
+		// fmt.Println("received bytes over the network: ", n)
 		fmt.Println(fileBuffer.String())
 	}
 
