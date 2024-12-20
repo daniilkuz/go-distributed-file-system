@@ -9,5 +9,5 @@ type RPC struct {
 	// From    net.Addr
 	From    string
 	Payload []byte
-	stream  bool
+	Stream  bool
 }
