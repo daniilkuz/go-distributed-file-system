@@ -80,6 +80,7 @@ func (s *FileServer) broadcast(msg *Message) error {
 	}
 
 	for _, peer := range s.peers {
+		peer.Send([]byte{p2p.IncommingMessage})
 		if err := peer.Send(buf.Bytes()); err != nil {
 			return err
 		}
@@ -156,6 +157,7 @@ func (s *FileServer) Store(key string, r io.Reader) error {
 	// payload := []byte("super large file")
 
 	for _, peer := range s.peers {
+		peer.Send([]byte{p2p.IncommingStream})
 		// n, err := io.Copy(peer, bytes.NewReader(payload))
 		n, err := io.Copy(peer, fileBuffer)
 		if err != nil {
