@@ -41,8 +41,11 @@ func main() {
 	go s2.Start()
 	time.Sleep(4 * time.Second)
 
-	data := bytes.NewReader([]byte("Something to say"))
-	s2.Store("private key", data)
+	for i := 0; i < 10; i++ {
+		data := bytes.NewReader([]byte("Something to say"))
+		s2.Store("private key", data)
+		time.Sleep(500 * time.Millisecond)
+	}
 
 	// r, err := s2.Get("private key")
 	// if err != nil {
