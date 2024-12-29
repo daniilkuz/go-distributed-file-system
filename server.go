@@ -152,7 +152,7 @@ func (s *FileServer) Store(key string, r io.Reader) error {
 		return err
 	}
 
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Millisecond * 5)
 
 	// payload := []byte("super large file")
 
@@ -297,7 +297,7 @@ func (s *FileServer) handleMessageStoreFile(from string, msg MessageStoreFile) e
 		return err
 	}
 
-	fmt.Printf("writtten (%d) bytes to disk\n", n)
+	fmt.Printf("[%s] writtten (%d) bytes to disk\n", s.Transport.Addr(), n)
 
 	peer.(*p2p.TCPPeer).Wg.Done()
 

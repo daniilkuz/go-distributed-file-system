@@ -64,6 +64,10 @@ func NewTCPTransport(opts TCPTransportOpts) *TCPTransport {
 	}
 }
 
+func (t *TCPTransport) Addr() string {
+	return t.ListenAddr
+}
+
 func (t *TCPTransport) Consume() <-chan RPC {
 	return t.rpcch
 }
@@ -133,8 +137,8 @@ func (t *TCPTransport) handleConn(conn net.Conn, outbound bool) {
 		}
 	}
 
-	rpc := RPC{}
 	for {
+		rpc := RPC{}
 		err = t.Decoder.Decode(conn, &rpc)
 		// fmt.Println(reflect.TypeOf(err))
 		// panic(err)
