@@ -299,7 +299,8 @@ func (s *FileServer) handleMessageStoreFile(from string, msg MessageStoreFile) e
 
 	fmt.Printf("[%s] writtten (%d) bytes to disk\n", s.Transport.Addr(), n)
 
-	peer.(*p2p.TCPPeer).Wg.Done()
+	// peer.(*p2p.TCPPeer).Wg.Done()
+	peer.CloseStream()
 
 	// fmt.Printf("recv store file msg: %+v\n", msg)
 	return nil
