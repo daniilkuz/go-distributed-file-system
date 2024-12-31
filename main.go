@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"time"
 
@@ -42,11 +41,11 @@ func main() {
 	go s2.Start()
 	time.Sleep(4 * time.Second)
 
-	for i := 0; i < 10; i++ {
-		data := bytes.NewReader([]byte("Something to say"))
-		s2.Store(fmt.Sprintf("private_key_%d", i), data)
-		time.Sleep(5 * time.Millisecond)
-	}
+	// for i := 0; i < 10; i++ {
+	data := bytes.NewReader([]byte("Something to say"))
+	s2.Store("picture.jpg", data)
+	time.Sleep(5 * time.Millisecond)
+	// }
 
 	// r, err := s2.Get("private key")
 	// if err != nil {
