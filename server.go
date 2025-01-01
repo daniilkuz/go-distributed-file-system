@@ -90,10 +90,11 @@ func (s *FileServer) broadcast(msg *Message) error {
 
 func (s *FileServer) Get(key string) (io.Reader, error) {
 	if s.store.Has(key) {
+		fmt.Printf("[%s] serving file (%s) from local disk\n", s.Transport.Addr(), key)
 		return s.store.Read(key)
 	}
 
-	fmt.Printf("don't have file (%s) locally, fetching from network...\n", key)
+	fmt.Printf("[%s] don't have file (%s) locally, fetching from network...\n", s.Transport.Addr(), key)
 	msg := Message{
 		Payload: MessageGetFile{
 			Key: key,
@@ -104,6 +105,8 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		return nil, err
 	}
 
+	time.Sleep(time.Millisecond * 500)
+
 	for _, peer := range s.peers {
 		fmt.Println("receiving stream from peer: ", peer.RemoteAddr())
 		fileBuffer := new(bytes.Buffer)
@@ -111,7 +114,7 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("received bytes over the network: ", n)
+		fmt.Printf("[%s] received %d bytes over the network\n", s.Transport.Addr(), n)
 		fmt.Println(fileBuffer.String())
 	}
 
