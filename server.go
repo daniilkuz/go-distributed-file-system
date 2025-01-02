@@ -114,7 +114,7 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("[%s] received %d bytes over the network\n", s.Transport.Addr(), n)
+		fmt.Printf("[%s] received %d bytes over the network from (%s)\n", s.Transport.Addr(), n, peer.RemoteAddr())
 		fmt.Println(fileBuffer.String())
 	}
 
