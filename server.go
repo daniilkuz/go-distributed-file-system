@@ -116,6 +116,8 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		}
 		fmt.Printf("[%s] received %d bytes over the network from (%s)\n", s.Transport.Addr(), n, peer.RemoteAddr())
 		fmt.Println(fileBuffer.String())
+
+		peer.CloseStream()
 	}
 
 	select {}
@@ -279,12 +281,14 @@ func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error
 		return fmt.Errorf("peer %s not in map", from)
 	}
 
+	peer.Send([]byte{p2p.IncommingStream})
+
 	n, err := io.Copy(peer, r)
 
 	if err != nil {
 		return err
 	}
-	fmt.Printf("written %d bytes over the network to %s\n", n, from)
+	fmt.Printf("[%s] written (%d) bytes over the network to %s\n", s.Transport.Addr(), n, from)
 
 	return nil
 }
