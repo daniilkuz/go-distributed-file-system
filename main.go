@@ -57,5 +57,5 @@ func main() {
 	}
 	fmt.Println(string(b))
 
-	select {}
+	// select {}
 }

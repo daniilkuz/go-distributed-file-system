@@ -108,21 +108,27 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 	time.Sleep(time.Millisecond * 500)
 
 	for _, peer := range s.peers {
-		fmt.Println("receiving stream from peer: ", peer.RemoteAddr())
-		fileBuffer := new(bytes.Buffer)
-		n, err := io.CopyN(fileBuffer, peer, 22)
+		n, err := s.store.Write(key, io.LimitReader(peer, 22))
 		if err != nil {
 			return nil, err
 		}
+
+		// fmt.Println("receiving stream from peer: ", peer.RemoteAddr())
+		// fileBuffer := new(bytes.Buffer)
+		// n, err := io.CopyN(fileBuffer, peer, 22)
+		// if err != nil {
+		// 	return nil, err
+		// }
 		fmt.Printf("[%s] received %d bytes over the network from (%s)\n", s.Transport.Addr(), n, peer.RemoteAddr())
-		fmt.Println(fileBuffer.String())
+		// fmt.Println(fileBuffer.String())
 
 		peer.CloseStream()
 	}
 
-	select {}
+	// select {}
 
-	return nil, nil
+	// return nil, nil
+	return s.store.Read(key)
 }
 
 func (s *FileServer) Store(key string, r io.Reader) error {
