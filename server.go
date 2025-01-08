@@ -92,7 +92,8 @@ func (s *FileServer) broadcast(msg *Message) error {
 func (s *FileServer) Get(key string) (io.Reader, error) {
 	if s.store.Has(key) {
 		fmt.Printf("[%s] serving file (%s) from local disk\n", s.Transport.Addr(), key)
-		return s.store.Read(key)
+		_, r, err := s.store.Read(key)
+		return r, err
 	}
 
 	fmt.Printf("[%s] don't have file (%s) locally, fetching from network...\n", s.Transport.Addr(), key)
@@ -131,7 +132,8 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 	// select {}
 
 	// return nil, nil
-	return s.store.Read(key)
+	_, r, err := s.store.Read(key)
+	return r, err
 }
 
 func (s *FileServer) Store(key string, r io.Reader) error {
@@ -280,7 +282,7 @@ func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error
 
 	fmt.Printf("got file (%s) serving over the network\n", msg.Key)
 
-	r, err := s.store.Read(msg.Key)
+	fileSize, r, err := s.store.Read(msg.Key)
 	if err != nil {
 		return err
 	}
@@ -292,7 +294,6 @@ func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error
 
 	peer.Send([]byte{p2p.IncommingStream})
 
-	var fileSize int64 = 22
 	binary.Write(peer, binary.LittleEndian, fileSize)
 	n, err := io.Copy(peer, r)
 
