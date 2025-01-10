@@ -30,7 +30,7 @@ func TestStoreDeleteKey(t *testing.T) {
 	s := NewStore(opts)
 	key := "key for jpg"
 	data := []byte("random jpg image")
-	if err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
+	if _, err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
 		t.Error(err)
 	}
 
@@ -48,7 +48,7 @@ func TestStore(t *testing.T) {
 		key := fmt.Sprintf("key %d for jpg", i)
 
 		data := []byte("random jpg image")
-		if err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
+		if _, err := s.writeStream(key, bytes.NewBuffer(data)); err != nil {
 			t.Error(err)
 		}
 
@@ -56,7 +56,7 @@ func TestStore(t *testing.T) {
 			t.Errorf("expected to have key %s", key)
 		}
 
-		r, err := s.Read(key)
+		_, r, err := s.Read(key)
 		if err != nil {
 			t.Error(err)
 		}
