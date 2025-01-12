@@ -287,8 +287,7 @@ func (s *FileServer) handleMessageGetFile(from string, msg MessageGetFile) error
 		return err
 	}
 
-	rc, ok := r.(io.ReadCloser)
-	if ok {
+	if rc, ok := r.(io.ReadCloser); ok {
 		fmt.Println("closing ReadCloser")
 		rc.Close()
 	}
