@@ -16,6 +16,11 @@ func encrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return 0, err
 	}
+
+	if _, err := dst.Write(iv); err != nil {
+		return 0, err
+	}
+
 	var (
 		buf    = make([]byte, 32*1024)
 		stream = cipher.NewCTR(block, iv)
