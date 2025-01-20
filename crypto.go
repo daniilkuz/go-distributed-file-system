@@ -7,7 +7,13 @@ import (
 	"io"
 )
 
-func encrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
+func newEncryptionKey() []byte {
+	keyBuf := make([]byte, 32)
+	io.ReadFull(rand.Reader, keyBuf)
+	return keyBuf
+}
+
+func coppyEncrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return 0, err
