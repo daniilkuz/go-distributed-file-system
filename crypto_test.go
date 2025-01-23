@@ -6,11 +6,7 @@ import (
 	"testing"
 )
 
-func TestNewEncryptionKey(t *testing.T) {
-
-}
-
-func TestCopyEnrypt(t *testing.T) {
+func TestCopyEncryptDecrypt(t *testing.T) {
 	src := bytes.NewReader([]byte("Good moring!"))
 	dst := new(bytes.Buffer)
 	key := newEncryptionKey()
