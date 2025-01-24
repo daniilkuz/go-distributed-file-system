@@ -13,6 +13,18 @@ func newEncryptionKey() []byte {
 	return keyBuf
 }
 
+func copyDecrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return 0, err
+	}
+
+	iv := make([]byte, block.BlockSize())
+	if _, err := src.Read(iv); err != nil {
+		return 0, err
+	}
+}
+
 func copyEncrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
