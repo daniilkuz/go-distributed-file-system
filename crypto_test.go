@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 )
 
@@ -26,5 +27,5 @@ func TestCopyEncryptDecrypt(t *testing.T) {
 		t.Error("Decryption failed!")
 	}
 
-	// fmt.Println(out.String())
+	fmt.Println(out.String())
 }
