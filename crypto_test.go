@@ -7,7 +7,7 @@ import (
 )
 
 func TestCopyEncryptDecrypt(t *testing.T) {
-	payload := "Good moring!"
+	payload := "Good morning!"
 	src := bytes.NewReader([]byte(payload))
 	dst := new(bytes.Buffer)
 	key := newEncryptionKey()
