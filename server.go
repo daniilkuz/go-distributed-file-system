@@ -15,6 +15,7 @@ import (
 
 type FileServerOpts struct {
 	// ListenAddr        string
+	EncKey            []byte
 	StoreageRoot      string
 	PathTransformFunc PathTransformFunc
 	Transport         *p2p.TCPTransport
@@ -175,10 +176,14 @@ func (s *FileServer) Store(key string, r io.Reader) error {
 	for _, peer := range s.peers {
 		peer.Send([]byte{p2p.IncommingStream})
 		// n, err := io.Copy(peer, bytes.NewReader(payload))
-		n, err := io.Copy(peer, fileBuffer)
+		n, err := copyEncrypt(s.EncKey, fileBuffer, peer)
 		if err != nil {
 			return err
 		}
+		// n, err := io.Copy(peer, fileBuffer)
+		// if err != nil {
+		// 	return err
+		// }
 		fmt.Println("received and written bytes to disk: ", n)
 		// if err := peer.Send(payload); err != nil {
 		// 	return err
