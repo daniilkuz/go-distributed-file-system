@@ -148,6 +148,10 @@ func (s *Store) readStream(key string) (int64, io.ReadCloser, error) {
 	return fi.Size(), file, nil
 }
 
+func (s *Store) writeDecrypt(encKey []byte, key string, r io.Reader) (int, error) {
+
+}
+
 func (s *Store) writeStream(key string, r io.Reader) (int64, error) {
 
 	pathKey := s.PathTransformFunc(key)
