@@ -148,7 +148,7 @@ func (s *Store) readStream(key string) (int64, io.ReadCloser, error) {
 	return fi.Size(), file, nil
 }
 
-func (s *Store) writeDecrypt(encKey []byte, key string, r io.Reader) (int, error) {
+func (s *Store) writeDecrypt(encKey []byte, key string, r io.Reader) (int64, error) {
 
 	pathKey := s.PathTransformFunc(key)
 	pathNameWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.Pathname)
@@ -201,13 +201,13 @@ func (s *Store) writeStream(key string, r io.Reader) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-
-	n, err := io.Copy(f, r)
-	if err != nil {
-		return 0, err
-	}
+	return io.Copy(f, r)
+	// n, err := io.Copy(f, r)
+	// if err != nil {
+	// 	return 0, err
+	// }
 
 	// log.Printf("writtten (%d) bytes to disk: %s", n, fullPathWithRoot)
 
-	return n, nil
+	// return n, nil
 }
