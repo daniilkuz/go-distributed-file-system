@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -43,11 +44,16 @@ func main() {
 	go s2.Start()
 	time.Sleep(4 * time.Second)
 
-	// data := bytes.NewReader([]byte("Something to say"))
-	// s2.Store("picture.jpg", data)
-	// time.Sleep(5 * time.Millisecond)
+	key := "picture.jpg"
+	data := bytes.NewReader([]byte("Something to say"))
+	s2.Store(key, data)
+	time.Sleep(5 * time.Millisecond)
 
-	r, err := s2.Get("picture.jpg")
+	if err := s2.store.Delete(key); err != nil {
+		log.Fatal(err)
+	}
+
+	r, err := s2.Get(key)
 	if err != nil {
 		log.Fatal(err)
 	}
