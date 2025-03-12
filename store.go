@@ -180,6 +180,10 @@ func (s *Store) writeDecrypt(encKey []byte, key string, r io.Reader) (int64, err
 	return int64(n), err
 }
 
+func (s *Store) openFileForWriting(key string) (*os.File, error) {
+
+}
+
 func (s *Store) writeStream(key string, r io.Reader) (int64, error) {
 
 	pathKey := s.PathTransformFunc(key)
