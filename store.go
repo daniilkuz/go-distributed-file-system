@@ -150,15 +150,7 @@ func (s *Store) readStream(key string) (int64, io.ReadCloser, error) {
 
 func (s *Store) writeDecrypt(encKey []byte, key string, r io.Reader) (int64, error) {
 
-	pathKey := s.PathTransformFunc(key)
-	pathNameWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.Pathname)
-	if err := os.MkdirAll(pathNameWithRoot, os.ModePerm); err != nil {
-		return 0, err
-	}
-
-	fullPathWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.FullPath())
-
-	f, err := os.Create(fullPathWithRoot)
+	f, err := s.openFileForWriting(key)
 	if err != nil {
 		return 0, err
 	}
