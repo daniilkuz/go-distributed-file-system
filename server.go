@@ -172,6 +172,14 @@ func (s *FileServer) Store(key string, r io.Reader) error {
 
 	time.Sleep(time.Millisecond * 5)
 
+	peers := []io.Writer{}
+
+	for _, peer := range s.peers {
+		peers = append(peers, peer)
+	}
+
+	mu:=io.MultiWriter(peers...))
+
 	// payload := []byte("super large file")
 
 	for _, peer := range s.peers {
