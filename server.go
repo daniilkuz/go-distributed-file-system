@@ -178,26 +178,14 @@ func (s *FileServer) Store(key string, r io.Reader) error {
 		peers = append(peers, peer)
 	}
 
-	mu:=io.MultiWriter(peers...))
-
-	// payload := []byte("super large file")
-
-	for _, peer := range s.peers {
-		peer.Send([]byte{p2p.IncommingStream})
-		// n, err := io.Copy(peer, bytes.NewReader(payload))
-		n, err := copyEncrypt(s.EncKey, fileBuffer, peer)
-		if err != nil {
-			return err
-		}
-		// n, err := io.Copy(peer, fileBuffer)
-		// if err != nil {
-		// 	return err
-		// }
-		fmt.Println("received and written bytes to disk: ", n)
-		// if err := peer.Send(payload); err != nil {
-		// 	return err
-		// }
+	mw := io.MultiWriter(peers...)
+	mw.Write([]byte{p2p.IncommingStream})
+	n, err := copyEncrypt(s.EncKey, fileBuffer, mw)
+	if err != nil {
+		return err
 	}
+
+	fmt.Printf("[%s]received and written (%d) bytes to disk\n", s.Transport.Addr(), n)
 
 	return nil
 
