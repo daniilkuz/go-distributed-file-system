@@ -44,25 +44,28 @@ func main() {
 	go s2.Start()
 	time.Sleep(4 * time.Second)
 
-	key := "picture.jpg"
-	data := bytes.NewReader([]byte("Something to say"))
-	s2.Store(key, data)
-	time.Sleep(5 * time.Millisecond)
+	for i := 0; i < 20; i++ {
+		// key := "picture.jpg"
+		key := fmt.Sprintf("pricture_%d", i)
+		data := bytes.NewReader([]byte("Something to say"))
+		s2.Store(key, data)
+		time.Sleep(5 * time.Millisecond)
 
-	if err := s2.store.Delete(key); err != nil {
-		log.Fatal(err)
-	}
+		if err := s2.store.Delete(key); err != nil {
+			log.Fatal(err)
+		}
 
-	r, err := s2.Get(key)
-	if err != nil {
-		log.Fatal(err)
-	}
+		r, err := s2.Get(key)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		log.Fatal(err)
+		b, err := ioutil.ReadAll(r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(b))
 	}
-	fmt.Println(string(b))
 
 	// select {}
 }
