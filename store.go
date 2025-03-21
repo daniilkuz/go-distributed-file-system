@@ -157,11 +157,6 @@ func (s *Store) readStream(key string) (int64, io.ReadCloser, error) {
 	pathKey := s.PathTransformFunc(key)
 	fullPathWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.FullPath())
 
-	// fi, err := os.Stat(fullPathWithRoot)
-	// if err != nil {
-	// 	return 0, nil, err
-	// }
-
 	file, err := os.Open(fullPathWithRoot)
 	if err != nil {
 		return 0, nil, err
