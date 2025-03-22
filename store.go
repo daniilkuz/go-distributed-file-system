@@ -87,9 +87,7 @@ func (s *Store) Has(key string) bool {
 	fullPathWithRoot := fmt.Sprintf("%s/%s", s.Root, pathKey.FullPath())
 
 	_, err := os.Stat(fullPathWithRoot)
-	// if err == fs.ErrNotExist {
-	// 	return false
-	// }
+
 	return !errors.Is(err, os.ErrNotExist)
 }
 
