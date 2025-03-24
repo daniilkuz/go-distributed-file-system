@@ -46,7 +46,7 @@ func main() {
 
 	for i := 0; i < 20; i++ {
 		// key := "picture.jpg"
-		key := fmt.Sprintf("pricture_%d", i)
+		key := fmt.Sprintf("pricture_%d.png", i)
 		data := bytes.NewReader([]byte("Something to say"))
 		s2.Store(key, data)
 		time.Sleep(5 * time.Millisecond)
