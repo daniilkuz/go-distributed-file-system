@@ -34,28 +34,31 @@ func main() {
 
 	s1 := makeServer(":3000", "")
 	s2 := makeServer(":4000", ":3000")
+	s3 := makeServer(":5000", ":3000", ":4000")
 
 	go func() {
 		log.Fatal(s1.Start())
+		time.Sleep(time.Second * 1)
+		log.Fatal(s2.Start())
 	}()
 
 	time.Sleep(4 * time.Second)
 
-	go s2.Start()
+	go s3.Start()
 	time.Sleep(4 * time.Second)
 
 	for i := 0; i < 20; i++ {
 		// key := "picture.jpg"
 		key := fmt.Sprintf("pricture_%d.png", i)
 		data := bytes.NewReader([]byte("Something to say"))
-		s2.Store(key, data)
+		s3.Store(key, data)
 		time.Sleep(5 * time.Millisecond)
 
-		if err := s2.store.Delete(key); err != nil {
+		if err := s3.store.Delete(key); err != nil {
 			log.Fatal(err)
 		}
 
-		r, err := s2.Get(key)
+		r, err := s3.Get(key)
 		if err != nil {
 			log.Fatal(err)
 		}
