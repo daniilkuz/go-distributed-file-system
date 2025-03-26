@@ -64,16 +64,16 @@ type MessageGetFile struct {
 // 	Data []byte
 // }
 
-func (s *FileServer) stream(msg *Message) error {
+// func (s *FileServer) stream(msg *Message) error {
 
-	peers := []io.Writer{}
-	for _, peer := range s.peers {
-		peers = append(peers, peer)
-	}
+// 	peers := []io.Writer{}
+// 	for _, peer := range s.peers {
+// 		peers = append(peers, peer)
+// 	}
 
-	mw := io.MultiWriter(peers...)
-	return gob.NewEncoder(mw).Encode(msg)
-}
+// 	mw := io.MultiWriter(peers...)
+// 	return gob.NewEncoder(mw).Encode(msg)
+// }
 
 func (s *FileServer) broadcast(msg *Message) error {
 	buf := new(bytes.Buffer)
