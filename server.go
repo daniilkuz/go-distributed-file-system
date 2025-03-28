@@ -103,12 +103,6 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 			return nil, err
 		}
 
-		// fmt.Println("receiving stream from peer: ", peer.RemoteAddr())
-		// fileBuffer := new(bytes.Buffer)
-		// n, err := io.CopyN(fileBuffer, peer, 22)
-		// if err != nil {
-		// 	return nil, err
-		// }
 		fmt.Printf("[%s] received %d bytes over the network from (%s)\n", s.Transport.Addr(), n, peer.RemoteAddr())
 		// fmt.Println(fileBuffer.String())
 
