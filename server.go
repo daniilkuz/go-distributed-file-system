@@ -104,7 +104,6 @@ func (s *FileServer) Get(key string) (io.Reader, error) {
 		}
 
 		fmt.Printf("[%s] received %d bytes over the network from (%s)\n", s.Transport.Addr(), n, peer.RemoteAddr())
-		// fmt.Println(fileBuffer.String())
 
 		peer.CloseStream()
 	}
