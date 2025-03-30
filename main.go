@@ -38,7 +38,8 @@ func main() {
 
 	go func() {
 		log.Fatal(s1.Start())
-		time.Sleep(time.Second * 1)
+		// time.Sleep(time.Second * 1)
+		time.Sleep(500 * time.Millisecond)
 		log.Fatal(s2.Start())
 	}()
 
