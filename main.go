@@ -36,12 +36,12 @@ func main() {
 	s2 := makeServer(":4000", ":3000")
 	s3 := makeServer(":5000", ":3000", ":4000")
 
-	go func() {
-		log.Fatal(s1.Start())
-		// time.Sleep(time.Second * 1)
-		time.Sleep(500 * time.Millisecond)
-		log.Fatal(s2.Start())
-	}()
+	// go func() {
+	go func() { log.Fatal(s1.Start()) }()
+	// time.Sleep(time.Second * 1)
+	time.Sleep(500 * time.Millisecond)
+	go func() { log.Fatal(s2.Start()) }()
+	// }()
 
 	time.Sleep(4 * time.Second)
 
