@@ -16,8 +16,6 @@ func TestCopyEncryptDecrypt(t *testing.T) {
 		t.Error(err)
 	}
 
-	// fmt.Println(dst.String())
-
 	fmt.Println(len(payload))
 	fmt.Println(len(dst.String()))
 
