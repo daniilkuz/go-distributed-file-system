@@ -13,6 +13,10 @@ func newEncryptionKey() []byte {
 	return keyBuf
 }
 
+func copyStream(stream cipher.Stream, blockSize int, src io.Reader, dst io.Writer) (int, error) {
+
+}
+
 func copyDecrypt(key []byte, src io.Reader, dst io.Writer) (int, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
